@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CropCare AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--g:#43A047;--gd:#0F3D2E;--gl:#7CB342;--bg:#E9EEFB;--card:#fff;--tx:#33413a;--mu:#6b7770;--ln:#e6ebe8;--sh:0 6px 18px rgba(15,61,46,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171b2b;--card:#1d2a24;--tx:#e3ece6;--ln:#2c3b34;--gd:#d6f0df;--mu:#9db0a5}}
+@media (prefers-color-scheme:light){:root[data-theme="dark"]{--bg:#171b2b;--card:#1d2a24;--tx:#e3ece6;--ln:#2c3b34;--gd:#d6f0df;--mu:#9db0a5}}
+:root[data-theme="dark"]{--bg:#171b2b;--card:#1d2a24;--tx:#e3ece6;--ln:#2c3b34;--gd:#d6f0df;--mu:#9db0a5}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:Poppins,system-ui,sans-serif;background:var(--bg);color:var(--tx);display:flex;justify-content:center}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+.app{position:relative;width:100%;max-width:430px;height:100%;background:var(--card);display:flex;flex-direction:column;box-shadow:0 0 40px rgba(15,61,46,.12)}
+@media(min-width:500px){.app{height:min(900px,96%);margin:auto;border-radius:36px;overflow:hidden}}
+header{display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 8px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand h1{font-size:24px;font-weight:700;color:var(--gd);line-height:1.1}
+.brand h1 span{color:var(--gl)}
+.brand p{font-size:11.5px;color:var(--mu)}
+.icon-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--mu);transition:.2s}
+.icon-btn:hover{background:var(--ln);transform:rotate(45deg)}
+main{flex:1;overflow-y:auto;padding:8px 18px 20px;scroll-behavior:smooth}
+.view{display:none}.view.on{display:block}
+.hero{position:relative;height:178px;border-radius:22px;overflow:hidden;box-shadow:var(--sh);color:#0F3D2E}
+.hero svg.bg{position:absolute;inset:0;width:100%;height:100%}
+.hero .t{position:absolute;left:16px;top:14px;width:55%}
+.hero h2{font-size:21px;line-height:1.2;font-weight:700}
+.hero p{font-size:11.5px;margin-top:8px;line-height:1.45;font-weight:500}
+.hero .sig{position:absolute;right:12px;bottom:10px;font-family:Caveat,cursive;font-size:17px;text-align:center;line-height:1.1;width:90px}
+.leaf{animation:fl 4s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-4px)}}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:16px 0}
+.q{border-radius:18px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11.5px;font-weight:500;color:#2c3a33;transition:.2s}
+.q:hover{transform:translateY(-3px);box-shadow:var(--sh)}.q:active{transform:scale(.95)}
+.q svg{width:30px;height:30px}
+.q1{background:#E6F4E8}.q2{background:#E3F1FD}.q3{background:#FFF4D6}.q4{background:#ECE6FB}
+.drop{border:2px dashed #a5d6a7;background:#F3FAF3;border-radius:22px;padding:22px 16px;text-align:center;transition:.2s}
+.drop.over{background:#dff2e0;border-color:var(--g);transform:scale(1.01)}
+.drop h3{color:#2E7D32;font-size:18px;margin-top:6px}
+.drop p{font-size:12.5px;color:#6b7770;margin:4px 0 14px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:300px;margin:auto;background:var(--g);color:#fff;font-weight:600;padding:13px;border-radius:30px;transition:.2s;box-shadow:0 6px 14px rgba(67,160,71,.3)}
+.btn:hover{background:#388E3C}.btn:active{transform:scale(.97)}
+.preview{display:none;margin:0 auto 12px;width:130px;height:130px;object-fit:cover;border-radius:18px;box-shadow:var(--sh)}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:22px 0 10px}
+.sec h3{font-size:16px;font-weight:500;color:var(--gd)}
+.sec button{color:#2E7D32;font-size:13.5px;font-weight:600}
+.crops{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x mandatory}
+.crop{flex:0 0 96px;scroll-snap-align:start;background:#f3f4f4;border-radius:16px;padding:10px 6px 8px;text-align:center;font-size:12.5px;transition:.2s}
+.crop:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.crop svg{width:64px;height:64px;display:block;margin:0 auto 4px}
+.res{display:none;margin-top:16px;background:var(--card);border:1px solid var(--ln);border-radius:20px;padding:18px;box-shadow:var(--sh);animation:pop .35s}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}}
+.res h4{font-size:17px;color:var(--gd)}
+.pill{display:inline-block;background:#E6F4E8;color:#2E7D32;font-size:12px;font-weight:600;border-radius:20px;padding:3px 10px;margin:6px 0 10px}
+.res h5{font-size:13px;margin:10px 0 4px;color:var(--gd)}
+.res ul{padding-left:18px;font-size:13px;line-height:1.55}
+.bar{height:6px;background:var(--ln);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--g);transition:width 1s}
+.spin{width:38px;height:38px;border:4px solid #cfe8d1;border-top-color:var(--g);border-radius:50%;margin:8px auto 10px;animation:r 0.8s linear infinite}
+@keyframes r{to{transform:rotate(1turn)}}
+nav{display:flex;border-top:1px solid var(--ln);background:var(--card);padding:6px 6px calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;color:var(--mu);padding:6px 0 8px;position:relative}
+nav button.on{color:#2E7D32;font-weight:600}
+nav button.on::after{content:"";position:absolute;bottom:0;width:44px;height:3px;border-radius:3px;background:var(--g)}
+nav svg{width:25px;height:25px}
+.back{display:flex;align-items:center;gap:6px;color:#2E7D32;font-weight:600;font-size:14px;margin:6px 0 12px}
+.page-t{font-size:22px;font-weight:700;color:var(--gd);margin-bottom:12px}
+.item{background:var(--card);border:1px solid var(--ln);border-radius:16px;padding:14px;margin-bottom:10px;font-size:13px;line-height:1.5}
+.item b{display:block;color:var(--gd);font-size:14.5px;margin-bottom:2px}
+.item small{color:var(--mu)}
+.item .btn{margin-top:10px;max-width:none;padding:9px;font-size:13px}
+.pf{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.av{width:60px;height:60px;border-radius:50%;background:#E6F4E8;display:grid;place-items:center;color:var(--g)}
+.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--gd);color:#fff;font-size:13px;padding:10px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:.3s;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">
+    <svg width="46" height="46" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 30C6 16 16 8 30 8c0 14-8 24-22 24z" fill="#66BB6A"/><path d="M20 40c0-12 6-22 20-26 2 14-6 24-20 26z" fill="#2E7D32"/><path d="M10 38c8-8 14-14 22-20" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    <div><h1>CropCare <span>AI</span></h1><p>Healthy Crops, Brighter Tomorrows</p></div>
+  </div>
+  <button class="icon-btn" aria-label="Settings" id="gear"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button>
+</header>
+
+<main id="main">
+<!-- HOME -->
+<section class="view on" id="v-home">
+  <div class="hero">
+    <svg class="bg" viewBox="0 0 380 178" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff0f7"/><stop offset=".6" stop-color="#eaf5e4"/></linearGradient>
+      <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter></defs>
+      <rect width="380" height="178" fill="url(#sky)"/>
+      <g filter="url(#bl)"><path d="M0 100 Q70 70 140 95 T260 88 T380 96 V178H0z" fill="#b9d6a3"/><path d="M0 120 Q90 100 190 118 T380 112 V178H0z" fill="#8fc46e"/><path d="M0 145 Q100 130 200 146 T380 138 V178H0z" fill="#5fae4c"/>
+      <circle cx="40" cy="108" r="9" fill="#7ab868"/><circle cx="300" cy="102" r="10" fill="#7ab868"/><circle cx="340" cy="106" r="8" fill="#6aaa5a"/></g>
+    </svg>
+    <div class="t"><h2>Detect Crop Diseases with AI</h2><p>Upload a leaf image and get instant disease detection and treatment advice.</p></div>
+    <svg style="position:absolute;right:14px;top:14px;width:130px;height:150px" viewBox="0 0 130 150" role="img" aria-label="A hand holding a green leaf inside a scanner frame">
+      <g fill="none" stroke="#0F5A3A" stroke-width="5" stroke-linecap="round"><path d="M6 30V8h22"/><path d="M102 8h22v22"/><path d="M6 100V122h22"/><path d="M124 100v22h-22"/></g>
+      <g class="leaf"><path d="M64 118C62 90 64 70 66 52" stroke="#2E7D32" stroke-width="3" fill="none"/>
+      <path d="M66 70C40 66 28 48 30 34c22 0 36 12 36 36z" fill="#4CAF50"/><path d="M66 56C70 30 88 18 108 20c2 22-14 38-42 36z" fill="#66BB6A"/><path d="M66 84c22-4 38 4 44 18-20 6-38-2-44-18z" fill="#388E3C"/><path d="M66 70C52 56 44 46 36 38M66 56c14-12 26-22 38-30" stroke="#a5d6a7" stroke-width="1.6" fill="none"/></g>
+      <path d="M44 150c4-20 16-34 30-36l16 8c8 4 14 10 16 28z" fill="#f1c9a5"/><path d="M64 118c6-4 12-2 14 4" stroke="#e0ad86" stroke-width="2" fill="none"/>
+    </svg>
+    <div class="sig">For a Healthier Tomorrow</div>
+  </div>
+
+  <div class="quick">
+    <button class="q q1" data-go="detect"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 20C5 11 11 5 23 5c0 11-6 18-18 15z" fill="#43A047"/><path d="M8 24c6-6 10-10 14-14" stroke="#fff" stroke-width="1.6" fill="none"/></svg>Detect<br>Disease</button>
+    <button class="q q2" data-go="library"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 7c5-2 9-1 13 2 4-3 8-4 13-2v18c-5-2-9-1-13 2-4-3-8-4-13-2z" fill="#2B7BB9"/><path d="M16 9v18" stroke="#E3F1FD" stroke-width="2"/></svg>Disease<br>Library</button>
+    <button class="q q3" data-go="tips"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a8 8 0 0 0-4 15v3h8v-3a8 8 0 0 0-4-15z" fill="#F9B91A"/><path d="M12 25h8M13 28h6" stroke="#8a6d1d" stroke-width="2" stroke-linecap="round"/></svg>Farming<br>Tips</button>
+    <button class="q q4" data-go="experts"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="10" r="5" fill="#7E57C2"/><circle cx="6" cy="13" r="3.5" fill="#9575CD"/><circle cx="26" cy="13" r="3.5" fill="#9575CD"/><path d="M6 27c0-6 4-10 10-10s10 4 10 10z" fill="#7E57C2"/></svg>Expert<br>Support</button>
+  </div>
+
+  <div class="drop" id="drop">
+    <img class="preview" id="preview" alt="Preview of the selected leaf">
+    <svg width="64" height="50" viewBox="0 0 64 50" aria-hidden="true"><path d="M16 46a13 13 0 0 1-1-26 17 17 0 0 1 33-3 14 14 0 0 1 1 29z" fill="#43A047"/><path d="M32 40V22m-8 8 8-8 8 8" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h3>Upload Leaf Image</h3>
+    <p>Tap to choose an image or take a photo</p>
+    <button class="btn" id="choose"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="3.5"/></svg>Choose Image</button>
+    <input type="file" id="file" accept="image/*" capture="environment" class="sr" aria-label="Choose a leaf image">
+  </div>
+  <div class="res" id="res" aria-live="polite"></div>
+
+  <div class="sec"><h3>Supported Crops</h3><button data-go="crops">View All &gt;</button></div>
+  <div class="crops" id="cropRow"></div>
+</section>
+
+<!-- LIBRARY -->
+<section class="view" id="v-library"><button class="back" data-go="home">&lsaquo; Back</button><h2 class="page-t">Disease Library</h2><div id="libList"></div></section>
+<!-- TIPS -->
+<section class="view" id="v-tips"><button class="back" data-go="home">&lsaquo; Back</button><h2 class="page-t">Farming Tips</h2><div id="tipList"></div></section>
+<!-- EXPERTS -->
+<section class="view" id="v-experts"><button class="back" data-go="home">&lsaquo; Back</button><h2 class="page-t">Expert Support</h2><div id="expList"></div></section>
+<!-- CROPS -->
+<section class="view" id="v-crops"><h2 class="page-t">My Crops</h2><p class="item" id="cropNote">Tap a crop to add it to your list.</p><div id="myList"></div></section>
+<!-- PROFILE -->
+<section class="view" id="v-profile"><h2 class="page-t">Profile</h2>
+  <div class="pf"><div class="av"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 3.5-8 8-8s8 3 8 8z"/></svg></div><div><b>Farmer</b><br><small style="color:var(--mu)">Guest account</small></div></div>
+  <div class="item"><b>Scans this session</b><span id="scanCount">0</span> leaf images analyzed</div>
+  <div class="item"><b>Language</b>English</div>
+  <button class="btn" id="theme" style="max-width:none">Toggle dark mode</button>
+</section>
+</main>
+
+<nav aria-label="Main">
+  <button data-go="home" class="on" aria-label="Home"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 2 12h3v9h5v-6h4v6h5v-9h3z"/></svg>Home</button>
+  <button data-go="crops" aria-label="My Crops"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22v-9M12 13C12 8 8 5 3 5c0 5 3 8 9 8zM12 15c0-4 3-7 8-7 0 4-3 7-8 7z"/></svg>My Crops</button>
+  <button data-go="tips" aria-label="Tips"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>Tips</button>
+  <button data-go="profile" aria-label="Profile"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 3.5-8 8-8s8 3 8 8z"/></svg>Profile</button>
+</nav>
+<div class="toast" id="toast" role="status"></div>
+</div>
+
+<script>
+/* ---------- DATA (replace with API / DB later) ---------- */
+const CROPS=[
+ {n:"Rice",c:"#e9c46a",s:'<path d="M32 58V20" stroke="#8a9a3b" stroke-width="2"/><g fill="#e6b93c"><ellipse cx="32" cy="14" rx="3" ry="6"/><ellipse cx="25" cy="22" rx="3" ry="6" transform="rotate(-25 25 22)"/><ellipse cx="39" cy="22" rx="3" ry="6" transform="rotate(25 39 22)"/><ellipse cx="24" cy="34" rx="3" ry="6" transform="rotate(-30 24 34)"/><ellipse cx="40" cy="34" rx="3" ry="6" transform="rotate(30 40 34)"/></g>'},
+ {n:"Maize",c:"#f4c430",s:'<path d="M32 8c10 8 14 24 8 40H24C18 32 22 16 32 8z" fill="#f4c430"/><path d="M32 58C14 52 14 34 22 28c2 12 8 20 10 30zM32 58c18-6 18-24 10-30-2 12-8 20-10 30z" fill="#6aa84f"/><path d="M26 24h12M24 32h16M25 40h14" stroke="#d9a400" stroke-width="1.5"/>'},
+ {n:"Soybean",c:"#4CAF50",s:'<path d="M32 58V30" stroke="#388E3C" stroke-width="2"/><g fill="#5cb85c"><ellipse cx="32" cy="18" rx="8" ry="11"/><ellipse cx="18" cy="32" rx="9" ry="6" transform="rotate(-20 18 32)"/><ellipse cx="46" cy="32" rx="9" ry="6" transform="rotate(20 46 32)"/><ellipse cx="22" cy="46" rx="8" ry="5" transform="rotate(-10 22 46)"/><ellipse cx="42" cy="46" rx="8" ry="5" transform="rotate(10 42 46)"/></g>'},
+ {n:"Tomato",c:"#e53935",s:'<circle cx="24" cy="38" r="14" fill="#e53935"/><circle cx="43" cy="32" r="11" fill="#d32f2f"/><circle cx="34" cy="48" r="9" fill="#ef5350"/><path d="M18 26l6 4 6-4-3 6zM38 22l5 3 5-3-3 5z" fill="#43A047"/>'},
+ {n:"Cotton",c:"#fff",s:'<path d="M32 58V34" stroke="#6d4c41" stroke-width="2"/><g fill="#fafafa" stroke="#d6d6d6"><circle cx="24" cy="26" r="9"/><circle cx="40" cy="26" r="9"/><circle cx="32" cy="16" r="9"/><circle cx="32" cy="30" r="8"/></g><path d="M20 52c6-8 12-10 12-10s6 2 12 10z" fill="#6aa84f"/>'}
+];
+const DISEASES=[
+ {name:"Tomato Early Blight",conf:94,symptoms:["Dark brown spots with concentric rings","Yellowing around lesions","Lower leaves affected first"],advice:["Remove and destroy infected leaves","Apply a copper-based or chlorothalonil fungicide","Water at the base and rotate crops yearly"]},
+ {name:"Rice Leaf Blast",conf:89,symptoms:["Diamond-shaped grey-centred lesions","Brown margins on leaves","Weak, broken stems in severe cases"],advice:["Avoid excess nitrogen fertilizer","Spray tricyclazole as per label","Use resistant varieties next season"]},
+ {name:"Healthy Leaf",conf:97,symptoms:["No visible lesions or discoloration"],advice:["Keep up regular watering and balanced nutrients","Scout fields weekly for early signs"]}
+];
+const LIB=[["Early Blight","Fungal. Ringed brown spots on older leaves. Tomato, potato."],["Leaf Blast","Fungal. Diamond lesions on rice leaves in humid weather."],["Powdery Mildew","White powder on leaf surface. Common in cotton and soybean."],["Northern Leaf Blight","Long grey-green lesions on maize leaves."],["Bacterial Spot","Small water-soaked spots turning dark. Tomato, pepper."]];
+const TIPS=[["Water early in the day","Morning watering lets leaves dry fast and lowers fungal risk."],["Rotate your crops","Changing crops each season breaks disease cycles in the soil."],["Scout every week","Check the underside of leaves. Early spots are easier to treat."],["Clean your tools","Wipe blades and sprayers between plots to avoid spreading disease."]];
+const EXPERTS=[["Dr. Lakshmi Rao","Plant pathologist · Rice, cotton"],["Ravi Kumar","Agronomist · Tomato, maize"],["Anita Sharma","Soil and nutrition advisor"]];
+
+/* ---------- HELPERS ---------- */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const cropSVG=c=>`<svg viewBox="0 0 64 64" aria-hidden="true">${c.s}</svg>`;
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),2200)}
+
+/* ---------- RENDER LISTS ---------- */
+$("#cropRow").innerHTML=CROPS.map(c=>`<button class="crop" data-crop="${c.n}">${cropSVG(c)}${c.n}</button>`).join("");
+$("#libList").innerHTML=LIB.map(d=>`<div class="item"><b>${d[0]}</b>${d[1]}</div>`).join("");
+$("#tipList").innerHTML=TIPS.map(d=>`<div class="item"><b>${d[0]}</b>${d[1]}</div>`).join("");
+$("#expList").innerHTML=EXPERTS.map(d=>`<div class="item"><b>${d[0]}</b><small>${d[1]}</small><button class="btn" data-ask="${d[0]}">Ask a question</button></div>`).join("");
+
+/* ---------- NAVIGATION ---------- */
+const tabs=["home","crops","tips","profile"];
+function go(v){
+  if(v==="detect"){go("home");setTimeout(()=>{$("#drop").scrollIntoView({behavior:"smooth",block:"center"});$("#choose").focus({preventScroll:true})},50);return}
+  $$(".view").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));
+  $$("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===v));
+  $("#main").scrollTo({top:0});
+}
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]");if(g)go(g.dataset.go);
+  const c=e.target.closest("[data-crop]");if(c){mine.add(c.dataset.crop);renderMine();toast(c.dataset.crop+" added to My Crops")}
+  const a=e.target.closest("[data-ask]");if(a)toast("Request sent to "+a.dataset.ask);
+});
+const mine=new Set();
+function renderMine(){
+  $("#myList").innerHTML=[...mine].map(n=>`<div class="item"><b>${n}</b><small>Added to your list</small></div>`).join("");
+  $("#cropNote").textContent=mine.size?"Your crops":"Tap a crop on the Home screen to add it to your list.";
+}
+renderMine();
+
+/* ---------- SETTINGS / THEME ---------- */
+function theme(){const r=document.documentElement,d=r.dataset.theme==="dark";r.dataset.theme=d?"light":"dark";}
+$("#theme").onclick=theme;$("#gear").onclick=()=>go("profile");
+
+/* ---------- UPLOAD + ANALYZE ---------- */
+let scans=0;
+const drop=$("#drop"),file=$("#file");
+$("#choose").onclick=()=>file.click();
+drop.addEventListener("click",e=>{if(!e.target.closest("button"))file.click()});
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over")}));
+drop.addEventListener("drop",e=>handle(e.dataTransfer.files[0]));
+file.onchange=()=>handle(file.files[0]);
+
+/* Swap this function for a real call, e.g.
+   const fd=new FormData();fd.append("image",img);
+   return (await fetch("/api/analyze",{method:"POST",body:fd})).json();
+   Expected shape: {name, conf, symptoms:[], advice:[]} */
+async function analyzeImage(img){
+  await new Promise(r=>setTimeout(r,1800));
+  return DISEASES[Math.floor(Math.random()*DISEASES.length)];
+}
+
+async function handle(f){
+  const res=$("#res");
+  if(!f)return;
+  if(!f.type.startsWith("image/")){toast("Please choose an image file");return}
+  const p=$("#preview");p.src=URL.createObjectURL(f);p.style.display="block";
+  res.style.display="block";
+  res.innerHTML='<div class="spin" aria-hidden="true"></div><p style="text-align:center;font-size:14px">Analyzing...</p>';
+  try{
+    const d=await analyzeImage(f);scans++;$("#scanCount").textContent=scans;
+    res.innerHTML=`<h4>${d.name}</h4><span class="pill">${d.conf}% confidence</span>
+      <div class="bar" role="img" aria-label="Confidence ${d.conf}%"><i style="width:0"></i></div>
+      <h5>Symptoms</h5><ul>${d.symptoms.map(s=>`<li>${s}</li>`).join("")}</ul>
+      <h5>Treatment advice</h5><ul>${d.advice.map(s=>`<li>${s}</li>`).join("")}</ul>`;
+    requestAnimationFrame(()=>res.querySelector(".bar i").style.width=d.conf+"%");
+    res.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }catch(e){res.innerHTML="<p>Analysis failed. Check your connection and try again.</p>"}
+}
+</script>
+</body>
+</html>
